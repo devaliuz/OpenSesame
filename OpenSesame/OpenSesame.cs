@@ -22,18 +22,25 @@ namespace OpenSesame
         {
             try
             {
-                string PW = "";                                                                                                             //Sets empty String for PW
-                Random rd = new Random();                                                                                                   //initializes randomclass
-                while (PW.Length < INDEX_PW.Value)                                                                                           //repeats while Password is shorter than wanted value
+                string PW = "";
+                //initializes randomclass
+                Random rd = new Random();
+                //repeats while Password is shorter than wanted value
+                while (PW.Length < INDEX_PW.Value)                                                                                           
                 {
-                    int rdascii = rd.Next(33, 123);                                                                                          //gives random number between 33 and 123
-                    if (rdascii >= 33 && rdascii != 34 && rdascii <= 38 || rdascii >= 47 && rdascii <= 57 || rdascii >= 60 && rdascii <= 90 || rdascii >= 97)    //checks if rnd number could be converted to useable char
+                    //gives random number between 33 and 123 to rdascii
+                    int rdascii = rd.Next(33, 123);
+                    //checks if rnd number could be converted to useable char
+                    if (rdascii >= 33 && rdascii != 34 && rdascii <= 38 || rdascii >= 47 && rdascii <= 57 || rdascii >= 60 && rdascii <= 90 || rdascii >= 97)    
                     {
-                        char c = (char)rdascii;                                                                                             //converts rdascii into a readable char
-                        PW += c;                                                                                                            //adds readable char to Password
+                        //converts rdascii into a readable char
+                        char c = (char)rdascii;
+                        //adds readable char to Password
+                        PW += c;                                                                                                            
                     }
                 }
-                TB_NEW_PASSWORD.Text = PW;                                                                                                  //Shows the random generated Password
+                //Shows the random generated Password
+                TB_NEW_PASSWORD.Text = PW;                                                                                                  
             }
             catch (Exception ex)
             {
@@ -43,66 +50,74 @@ namespace OpenSesame
 
         private void BTN_NEW_CPY_PWD_Click(object sender, EventArgs e)
         {
-            Clipboard.SetData(DataFormats.Text, TB_NEW_PASSWORD.Text);                                                                   //Copies Text into Clipboard
+            //Copies Text into Clipboard
+            Clipboard.SetData(DataFormats.Text, TB_NEW_PASSWORD.Text);                                                                   
         }
 
         private void BTN_NEW_CPY_USERNAME_Click(object sender, EventArgs e)
         {
-            Clipboard.SetData(DataFormats.Text, TB_NEW_USERNAME.Text);                                                                  //"-"
+            Clipboard.SetData(DataFormats.Text, TB_NEW_USERNAME.Text);                                                                  
         }
 
-        private void BTN_CPY_USERNAME_Click(object sender, EventArgs e)                                                                 //"-"
+        private void BTN_CPY_USERNAME_Click(object sender, EventArgs e)                                                                
         {
             Clipboard.SetData(DataFormats.Text, TB_USERNAME.Text);
         }
 
-        private void BTN_CPY_PWD_Click(object sender, EventArgs e)                                                                      //"-"
+        private void BTN_CPY_PWD_Click(object sender, EventArgs e)                                                                      
         {
             Clipboard.SetData(DataFormats.Text, TB_PASSWORD.Text);
         }
 
-        private void DROPDOWN_KeyPress(object sender, KeyPressEventArgs e)                                                              //prevents User from Typing into the Dropdown
+        private void DROPDOWN_KeyPress(object sender, KeyPressEventArgs e)
         {
+            //prevents User from Typing into the Dropdown
             e.Handled = true;
         }
-        private void BTN_SAVE_TO_DB_Click(object sender, EventArgs e)                                                                   //Saves Userdata to DB
+        private void BTN_SAVE_TO_DB_Click(object sender, EventArgs e)                                                                   
         {
+            //Saves Userdata to DB
             try
             {
-                using (SQLiteConnection connection = new SQLiteConnection("Data Source = Data.sqlite3"))                                //Creates Connection to DB
+                //Creates Connection to DB
+                using (SQLiteConnection connection = new SQLiteConnection("Data Source = Data.sqlite3"))                                
                 {
-                    connection.Open();                                                                                                  //Opens Connection to DB
-                    using (SQLiteCommand command = new SQLiteCommand("SELECT * FROM UserData WHERE Service = '" + TB_NEW_SERVICE.Text + "'", connection))   //Creates query for SQLite to search if Entry for Service already exists
+                    connection.Open();
+                    //Creates query for SQLite to search if Entry for Service already exists
+                    using (SQLiteCommand command = new SQLiteCommand("SELECT * FROM UserData WHERE Service = '" + TB_NEW_SERVICE.Text + "'", connection))   
                     {
-                        using (SQLiteDataReader reader = command.ExecuteReader())                                                       //combines Query and Readfunvtion
+                        using (SQLiteDataReader reader = command.ExecuteReader())
                         {
-                            if (reader.Read() == true)                                                                                  //tries to find all Entries with same name as user has given
+                            //tries to find all Entries with same name as user has given
+                            if (reader.Read() == true)                                                                                  
                             {
-                                MessageBox.Show("Für den Dienst " + TB_NEW_SERVICE.Text + " sind bereits Anmeldedaten vorhanden! Die Daten wurden NICHT gespeichert!"); //If found Entries with same name, informs user to chose another Service-Name
+                                //informs user to chose another Service-Name
+                                MessageBox.Show("Für den Dienst " + TB_NEW_SERVICE.Text + " sind bereits Anmeldedaten vorhanden! Die Daten wurden NICHT gespeichert!"); 
                             }
                             else
                             {
-                                string Service = TB_NEW_SERVICE.Text;                                                               //Saves Userinput into variable 
-                                string Username = encrypt(TB_NEW_USERNAME.Text);                                                    //Saves Userinput encrypted into variable
-                                string Password = encrypt(TB_NEW_PASSWORD.Text);                                                    //-"-
-                                string URL = TB_NEW_URL_LOGIN.Text;                                                                 //Saves Userinput into variable 
-                                if (Service == "" || TB_NEW_USERNAME.Text == "" || TB_NEW_PASSWORD.Text == "")                      //Checks, if all needed inputfields are filled
+                                string Service = TB_NEW_SERVICE.Text;                                               //Saves Userinput into variable 
+                                string Username = encrypt(TB_NEW_USERNAME.Text);                                    //Saves Userinput encrypted into variable
+                                string Password = encrypt(TB_NEW_PASSWORD.Text);                                    //-"-
+                                string URL = TB_NEW_URL_LOGIN.Text;                                                 //Saves Userinput into variable 
+                                if (Service == "" || TB_NEW_USERNAME.Text == "" || TB_NEW_PASSWORD.Text == "")      //Checks, if all needed inputfields are filled
                                 {
-                                    MessageBox.Show("Bitte Dienst, Nutzernamen und Passwort eingeben!");                            //reminds user, to fill all fields which are needed
+                                    MessageBox.Show("Bitte Dienst, Nutzernamen und Passwort eingeben!");            //reminds user, to fill all fields which are needed
                                 }
                                 else
-                                {
-                                    SQLiteCommand command1 = new SQLiteCommand("INSERT INTO UserData('Service','Username','Password', 'URL') VALUES(@Service,@Username,@Password,@URL)", connection); //SQLitecommand for saving data into correct collums
-                                    command1.Parameters.AddWithValue("@Service", Service);                                          //gives Value to SQLite-Variable                             
+                                {   
+                                    //SQLitecommand for saving data into correct collums
+                                    SQLiteCommand command1 = new SQLiteCommand("INSERT INTO UserData('Service','Username','Password', 'URL') VALUES(@Service,@Username,@Password,@URL)", connection); 
+                                    command1.Parameters.AddWithValue("@Service", Service);                          //gives Value to SQLite-Variable                             
                                     command1.Parameters.AddWithValue("@Username", Username);
                                     command1.Parameters.AddWithValue("@Password", Password);
                                     command1.Parameters.AddWithValue("@URL", URL);
-                                    command1.ExecuteNonQuery();                                                                     //writes all data from above into the collumns
-                                    TB_NEW_SERVICE.Text = "";                                                                       //Clears inputfields
+                                    command1.ExecuteNonQuery();                                                     //writes all data from above into the collumns
+                                    TB_NEW_SERVICE.Text = "";                                                       //Clears inputfields
                                     TB_NEW_USERNAME.Text = "";
                                     TB_NEW_PASSWORD.Text = "";
                                     TB_NEW_URL_LOGIN.Text = "";
-                                    MessageBox.Show("Daten für " + Service + " hinzugefügt!");                                      //gives feedback to the user
+                                    MessageBox.Show("Daten für " + Service + " hinzugefügt!");                      //gives feedback to the user
                                 }
                             }
                         }
@@ -110,8 +125,9 @@ namespace OpenSesame
                 }
             }
             catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);                                                                                        //shows, what exactly went wrong, if something went wrong
+            {   
+                //shows, what exactly went wrong, if something went wrong
+                MessageBox.Show(ex.Message);                                                                                        
             }
         }
 
@@ -124,28 +140,34 @@ namespace OpenSesame
 
         private void DROPDOWN_SelectedIndexChanged(object sender, EventArgs e)
         {
-            string str = "'" + this.DROPDOWN.SelectedItem.ToString() + "'";                                                             //saves selected Item into variable
+            //saves selected Item into variable
+            string str = "'" + this.DROPDOWN.SelectedItem.ToString() + "'";
 
-            if ((str != "") && (str != "Dienst wählen"))                                                                                //checks if there actually was something selected from Database          
+            //checks if there actually was something selected from Database
+            if ((str != "") && (str != "Dienst wählen"))                                                                                          
             {
                 try
                 {
                     using (SQLiteConnection connection = new SQLiteConnection("Data Source = Data.sqlite3"))
                     {
                         connection.Open();
-                        using (SQLiteCommand command = new SQLiteCommand("SELECT * FROM UserData WHERE Service = " + str, connection))     //creates SQlite-Command to select needed values
+                        //creates SQlite-Command to select needed values
+                        using (SQLiteCommand command = new SQLiteCommand("SELECT * FROM UserData WHERE Service = " + str, connection))     
                         {
 
                             using (SQLiteDataReader reader = command.ExecuteReader())
                             {
                                 reader.Read();
-                                TB_USERNAME.Text = decrypt(reader["Username"].ToString());                                                  //writes decrypted Username into correct space
-                                TB_PASSWORD.Text = decrypt(reader["Password"].ToString());                                                  //writes decrypted Password into correct space
+                                //writes decrypted Username into correct space
+                                TB_USERNAME.Text = decrypt(reader["Username"].ToString());
+                                //writes decrypted Password into correct space
+                                TB_PASSWORD.Text = decrypt(reader["Password"].ToString());          
                             }
                         }
                     }
-                    BTN_DEL.Visible = true;                                                                                                 //opens Option to delete selected data
-                    BTN_GO.Visible = true;                                                                                                  //opens Option to start browsing the website for Logging into selected service
+                    //makes Delete and Go-Button visible
+                    BTN_DEL.Visible = true;
+                    BTN_GO.Visible = true;                                                          
                 }
                 catch (Exception ex)
                 {
@@ -157,25 +179,31 @@ namespace OpenSesame
         {
             try
             {
-                string password = "xw66AtED8AemHUD/GGsKKw==";                                                                                   //Fix password as default for encryption "Rot13" encrypted
+                //Fix password as default for encryption "Rot13" encrypted
+                string password = "xw66AtED8AemHUD/GGsKKw==";       
                 byte[] buffer = Encoding.Unicode.GetBytes(toEncrypt);
                 using (Aes aes = Aes.Create())
                 {
-                    byte[] salt = new byte[] { 0x49, 0x76, 0x61, 110, 0x20, 0x4d, 0x65, 100, 0x76, 0x65, 100, 0x65, 0x79 };                     //creates "salt" to blur the actual encryption
+                    //creates "salt" to blur the actual encryption
+                    byte[] salt = new byte[] { 0x49, 0x76, 0x61, 110, 0x20, 0x4d, 0x65, 100, 0x76, 0x65, 100, 0x65, 0x79 };                     
                     Rfc2898DeriveBytes bytes = new Rfc2898DeriveBytes(password, salt);
                     aes.Key = bytes.GetBytes(0x20);
-                    aes.IV = bytes.GetBytes(0x10);                                                                                              //creates a prefix to blur where the actual encrypted part starts
+                    //creates a prefix to blur where the actual encrypted part starts
+                    aes.IV = bytes.GetBytes(0x10);                                                                                              
                     using (MemoryStream stream = new MemoryStream())
                     {
                         using (CryptoStream stream2 = new CryptoStream((Stream)stream, aes.CreateEncryptor(), CryptoStreamMode.Write))
                         {
+                            //merges raw-data+password+salt+prefix
                             stream2.Write(buffer, 0, buffer.Length);
-                            stream2.Close();                                                                                                     //merges raw-data+password+salt+prefix
+                            stream2.Close();            
                         }
-                        toEncrypt = Convert.ToBase64String(stream.ToArray());                                                                   //creates useable string from bytes
+                        //creates useable string from bytes
+                        toEncrypt = Convert.ToBase64String(stream.ToArray());                                                                   
                     }
                 }
-                return toEncrypt;                                                                                                               //returns the encrypted string
+                //returns the encrypted string
+                return toEncrypt;                                                                                                               
             }
             catch (Exception ex)
             {

@@ -6,11 +6,13 @@ namespace OpenSesame
     {
         public DB()
         {
+            // Creates the database if it doesn't exist
             if (!File.Exists("./Data.sqlite3"))
             {
                 SQLiteConnection.CreateFile("Data.sqlite3");
                 using (SQLiteConnection connection = new SQLiteConnection("Data Source = Data.sqlite3"))
                 {
+                    // Creates the table
                     connection.Open();
                     using (SQLiteCommand command = new SQLiteCommand("CREATE TABLE 'UserData'('Service' TEXT NOT NULL, 'Username' TEXT NOT NULL, 'Password' TEXT NOT NULL, 'URL' TEXT)", connection))
                     {
@@ -19,8 +21,10 @@ namespace OpenSesame
                 }
             }
         }
+       
         public int count()
         {
+            // Counts the number of entries in the database
             int entries = 0;
             try
             {
@@ -33,6 +37,7 @@ namespace OpenSesame
                         {
                             if (reader.HasRows)
                             {
+                                // Counts the number of entries
                                 while (reader.Read())
                                 {
                                     entries++;
@@ -66,6 +71,7 @@ namespace OpenSesame
                         {
                             while (reader.Read())
                             {
+                                // Adds the of each entry service to the array
                                 arraytoreturn[index] = reader["Service"].ToString();
                                 index++;
                             }
